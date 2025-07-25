@@ -47,5 +47,3 @@ husky para tener control sobre el formato de los commits
 ```bash
 bun add -d @commitlint/cli @commitlint/config-conventional husky
 ```
-
-gaaaaaaaaaaaaaa
