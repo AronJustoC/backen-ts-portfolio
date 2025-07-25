@@ -7,9 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Define tus modelos aquí, por ejemplo:
-// model User {
-//   id    Int     @id @default(autoincrement)
-//   email String  @unique
-//   name  String?
-// }
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  bio       String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+
+  posts    Post[]
+  projects Project[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  author User @relation(fields: [userId], references: [id])
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  imageUrl    String?
+  repoUrl     String?
+  liveUrl     String?
+  createdAt   DateTime @default(now())
+
+  userId Int
+  owner  User @relation(fields: [userId], references: [id])
+}

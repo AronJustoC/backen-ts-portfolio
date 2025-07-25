@@ -1,0 +1,46 @@
+# Base de datos creada de forma manual con Mysql
+
+## Tabla users
+
+```sql
+CREATE TABLE users (
+id INT AUTOINCREMENT PRIMARY KEY,
+username VARCHAR(50) NOT NULL UNIQUE,
+email VARCHAR(100) NOT NULL UNIQUE,
+password VARCHAR(255) NOT NULL,
+bio TEXT,
+avatar_url VARCHAR(255),
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+## Tabla posts
+
+```sql
+CREATE TABLE posts (
+id INT AUTOINCREMENT PRIMARY KEY,
+title VARCHAR(255) NOT NULL,
+content TEXT NOT NULL,
+slug VARCHAR(255) NOT NULL UNIQUE,
+user_id INT NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+## Tabla projects
+
+```sql
+CREATE TABLE projects (
+id INT AUTOINCREMENT PRIMARY KEY,
+title VARCHAR(255) NOT NULL UNIQUE,
+description TEXT,
+image_url VARCHAR(255),
+repo_url VARCHAR(255),
+live_url VARCHAR(255),
+user_id INT NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+);
+```
