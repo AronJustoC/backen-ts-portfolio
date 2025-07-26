@@ -80,4 +80,3 @@ The project uses ESLint for linting and Prettier for formatting.
 ## CI/CD
 
 The project uses GitHub Actions for continuous integration and deployment. The workflow is defined in `.github/workflows/deploy-production.yml`.
-
