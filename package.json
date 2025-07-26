@@ -41,6 +41,7 @@
   "type": "module",
   "exports": "./dist/index.mjs",
   "dependencies": {
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.38.0",
+    "zod": "^4.0.10"
   }
 }
