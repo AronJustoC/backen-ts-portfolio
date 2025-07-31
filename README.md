@@ -47,3 +47,19 @@ husky para tener control sobre el formato de los commits
 ```bash
 bun add -d @commitlint/cli @commitlint/config-conventional husky
 ```
+
+Luego se crear los repositories despues utils y services,
+para utils instalaremos encrypt para encriptar las contrasenias
+y jwt para token de sesion se instalan de la siguiente manera
+
+```bash
+bun add bcryptjs
+bun add -D @types/bcryptjs
+```
+
+Para jwt jsonWebToken:
+
+```bash
+bun add jsonwebtoken
+bun add -D @types/jsonwebtoken
+```
