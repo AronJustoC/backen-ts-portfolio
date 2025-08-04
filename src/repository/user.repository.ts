@@ -3,7 +3,7 @@ import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 const prisma = new PrismaClient();
 
-class UserRepository {
+export class UserRepository {
   /**
    * Busca y devuelve todos los usuarios de la base de datos.
    */
@@ -11,11 +11,18 @@ class UserRepository {
     return await prisma.user.findMany();
   }
   /**
-   * Busca usuario por si ID.
+   * Busca usuario por su ID.
    * @param id - El ID del usuario a buscar.
    */
   async findById(id: number) {
     return await prisma.user.findUnique({ where: { id } });
+  }
+  /**
+   * Busca usuario por su Email
+   * @param email - El Email del usuario a buscar.
+   */
+  async findByEmail(email: string) {
+    return await prisma.user.findUnique({ where: { email } });
   }
   /**
    * Crear un usuario en la base de datos.
@@ -47,7 +54,3 @@ class UserRepository {
     return await prisma.user.delete({ where: { id } });
   }
 }
-
-const userRepository = new UserRepository();
-
-export default userRepository;
