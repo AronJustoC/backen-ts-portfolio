@@ -1,5 +1,7 @@
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 
+const { sign, verify } = jwt;
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-for-dev';
 /**
  * Interfaz que define la estructura de los datos que se guardaran en token.

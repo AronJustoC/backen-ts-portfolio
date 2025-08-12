@@ -1,35 +1,39 @@
-import { PrismaClient } from '@prisma/client';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
-
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
 
 export class UserRepository {
+  private readonly prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
+
   /**
    * Busca y devuelve todos los usuarios de la base de datos.
    */
   async findAll() {
-    return await prisma.user.findMany();
+    return await this.prisma.user.findMany();
   }
   /**
    * Busca usuario por su ID.
    * @param id - El ID del usuario a buscar.
    */
   async findById(id: number) {
-    return await prisma.user.findUnique({ where: { id } });
+    return await this.prisma.user.findUnique({ where: { id } });
   }
   /**
    * Busca usuario por su Email
    * @param email - El Email del usuario a buscar.
    */
   async findByEmail(email: string) {
-    return await prisma.user.findUnique({ where: { email } });
+    return await this.prisma.user.findUnique({ where: { email } });
   }
   /**
    * Crear un usuario en la base de datos.
    * @param data - Los datos del usuario a crear.
    */
   async create(data: CreateUserDto) {
-    return await prisma.user.create({
+    return await this.prisma.user.create({
       data,
     });
   }
@@ -39,7 +43,7 @@ export class UserRepository {
    * @param data - Los datos a actualizar.
    */
   async update(id: number, data: UpdateUserDto) {
-    return await prisma.user.update({
+    return await this.prisma.user.update({
       where: {
         id: id,
       },
@@ -51,6 +55,6 @@ export class UserRepository {
    * @param id - El ID del usuario que se elimina.
    */
   async delete(id: number) {
-    return await prisma.user.delete({ where: { id } });
+    return await this.prisma.user.delete({ where: { id } });
   }
 }

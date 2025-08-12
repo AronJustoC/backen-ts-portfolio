@@ -31,7 +31,7 @@
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
     "start": "node dist/index.mjs",
-    "build": "pkgroll",
+    "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --ext .ts",

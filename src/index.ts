@@ -1,12 +1,11 @@
+import userRouter from './routes/user.routes';
 import express from 'express';
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Hello World from bluu_node backend!\n'); // Added newline for testing
-});
+app.use(express.json());
+app.use('/api/users', userRouter);
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server esta corriendo sobre  http://localhost:${port}`);
 });
