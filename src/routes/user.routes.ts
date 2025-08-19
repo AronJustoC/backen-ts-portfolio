@@ -5,21 +5,28 @@ import { UserService } from '../services/user.services';
 import { prisma } from '../utils/prisma.utils';
 
 const router = Router();
+
+// Nota: En una app más grande, esta inicialización de clases se centralizaría.
 const userRepository = new UserRepository(prisma);
 const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
-router.get('/', (_req, res) => {
-  userController.get(_req, res);
-});
-router.post('/', (req, res) => {
-  userController.create(req, res);
-});
-router.patch('/:id', (req, res) => {
-  userController.update(req, res);
-});
-router.delete('/:id', (req, res) => {
-  userController.remove(req, res);
-});
+// --- Rutas para gestionar usuarios (protegidas por token) ---
+
+// GET /api/users -> Obtener todos los usuarios
+router.get('/', (req, res) => userController.get(req, res));
+
+// GET /api/users/:id -> Obtener un usuario por su ID
+router.get('/:id', (req, res) => userController.getById(req, res));
+
+// PATCH /api/users/:id -> Actualizar un usuario
+router.patch('/:id', (req, res) => userController.update(req, res));
+
+// DELETE /api/users/:id -> Eliminar un usuario
+router.delete('/:id', (req, res) => userController.remove(req, res));
+
+// La ruta POST para crear usuarios se ha eliminado de este archivo
+// para evitar conflictos con el endpoint de registro público.
 
 export default router;
+

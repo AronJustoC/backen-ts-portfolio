@@ -1,5 +1,6 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import process from 'process';
+import { AppError } from './error.utils';
 
 interface User {
   email: string;
@@ -24,6 +25,16 @@ export async function Sign(value: User): Promise<TokenResponse> {
 
 export async function ValidateToken(token: string) {
   const secret = process.env.JWT_SECRET || 'super_secret_key';
-  const decoded = jwt.verify(token, secret);
-  return decoded;
+  try {
+    const decoded = jwt.verify(token, secret);
+    return decoded;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'TokenExpiredError') {
+      throw new AppError(401, 'Token expirado');
+    }
+    if (error instanceof Error && error.name === 'JsonWebTokenError') {
+      throw new AppError(401, 'Token invalido');
+    }
+    throw error;
+  }
 }

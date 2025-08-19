@@ -25,4 +25,3 @@ export async function validateToken(
     res.status(403).json({ error: 'Usuario no auntenticado', details: error });
   }
 }
-

@@ -1,11 +1,11 @@
 import express from 'express';
-import UserRoutes from './routes/user.routes';
 import corsMiddleware from './middleware/cors.middleware';
 import { rateLimit } from 'express-rate-limit';
-import { validateToken } from './middleware/auth.middleware';
+import mainRouter from './routes/index';
+import { errorMiddleware } from './middleware/error.middleware';
 
 const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
+  windowMs: 15 * 60 * 1000, // 15 minutos
   limit: 100,
   standardHeaders: true,
   legacyHeaders: false,
@@ -13,10 +13,18 @@ const limiter = rateLimit({
 
 export default function CreateServer() {
   const app = express();
+
+  // Middlewares globales
   app.use(corsMiddleware);
   app.disable('x-powered-by');
   app.use(express.json());
   app.use(limiter);
-  app.use('users/', validateToken, UserRoutes);
+
+  // Enrutador principal con prefijo /api
+  app.use('/api', mainRouter);
+
+  // Middleware de manejo de errores (debe ser el último)
+  app.use(errorMiddleware);
+
   return app;
 }

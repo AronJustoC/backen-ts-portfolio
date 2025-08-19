@@ -1,6 +1,14 @@
 import { compare } from 'bcryptjs';
 import { UserService } from './user.services';
-import { Sign } from '../utils/jwt.utils';
+import { Sign, ValidateToken } from '../utils/jwt.utils';
+import { AppError } from '../utils/error.utils';
+
+interface DecodedToken {
+  id: number;
+  email: string;
+  iat: number;
+  exp: number;
+}
 
 export class AuthService {
   private readonly userService: UserService;
@@ -32,5 +40,25 @@ export class AuthService {
     } catch (error) {
       console.log(error);
     }
+  }
+  async refreshSession(refreshToken: string) {
+    console.log('refreshToken:', refreshToken);
+    const decodedRefreshToken = (await ValidateToken(refreshToken)) as {
+      token: string;
+    };
+    console.log('decodedRefreshToken:', decodedRefreshToken);
+    const decodedAccessToken = (await ValidateToken(
+      decodedRefreshToken.token,
+    )) as DecodedToken;
+    console.log('decodedAccessToken:', decodedAccessToken);
+    const user = await this.userService.getById(decodedAccessToken.id);
+    if (!user) {
+      throw new AppError(404, 'Usuario del token ya no existe');
+    }
+    const tokenPayload = {
+      id: user?.id,
+      email: user.email ?? '',
+    };
+    return Sign(tokenPayload);
   }
 }

@@ -9,8 +9,30 @@ export class UserController {
   }
   async get(_req: Request, res: Response) {
     try {
-      const user = await this.userService.getAll();
-      res.status(200).json({ data: user });
+      const users = await this.userService.getAll();
+      const usersWithoutPasswords = users.map((user) => {
+        const { password: _password, ...userData } = user;
+        return userData;
+      });
+      res.status(200).json({ data: usersWithoutPasswords });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+  async getById(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return res
+          .status(400)
+          .json({ message: 'Formato invalido de ID de usuario' });
+      }
+      const user = await this.userService.getById(id);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+      const { password: _password, ...userData } = user;
+      res.status(200).json({ data: userData });
     } catch (error) {
       res.status(500).json({ error });
     }
@@ -44,7 +66,8 @@ export class UserController {
       if (!updatedUser) {
         return res.status(404).json({ message: 'Usuario no encontrado' });
       }
-      res.status(200).json({ data: updatedUser });
+      const { password: _password, ...userData } = updatedUser;
+      res.status(200).json({ data: userData });
     } catch (error) {
       res.status(500).json({ error });
     }
