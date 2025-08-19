@@ -80,3 +80,10 @@ The project uses ESLint for linting and Prettier for formatting.
 ## CI/CD
 
 The project uses GitHub Actions for continuous integration and deployment. The workflow is defined in `.github/workflows/deploy-production.yml`.
+
+## Future Improvements
+
+- **Password Reset:** Implement a secure password reset mechanism, likely involving email verification.
+- **Email Verification:** Add a process to verify user email addresses upon registration.
+- **Role-Based Access Control (RBAC):** Introduce a role system to differentiate permissions between user types (e.g., admin, user).
+- **Logging:** Integrate a more robust logging solution for better monitoring, auditing, and error tracking.
