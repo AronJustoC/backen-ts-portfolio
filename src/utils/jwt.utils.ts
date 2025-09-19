@@ -1,4 +1,4 @@
-import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import process from 'process';
 import { AppError } from './error.utils';
 

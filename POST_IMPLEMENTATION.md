@@ -19,14 +19,25 @@ import { z } from 'zod';
 
 export const createPostSchema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres.'),
-  content: z.string().min(10, 'El contenido debe tener al menos 10 caracteres.'),
+  content: z
+    .string()
+    .min(10, 'El contenido debe tener al menos 10 caracteres.'),
   slug: z.string().min(3, 'El slug debe tener al menos 3 caracteres.'),
 });
 
 export const updatePostSchema = z.object({
-  title: z.string().min(3, 'El título debe tener al menos 3 caracteres.').optional(),
-  content: z.string().min(10, 'El contenido debe tener al menos 10 caracteres.').optional(),
-  slug: z.string().min(3, 'El slug debe tener al menos 3 caracteres.').optional(),
+  title: z
+    .string()
+    .min(3, 'El título debe tener al menos 3 caracteres.')
+    .optional(),
+  content: z
+    .string()
+    .min(10, 'El contenido debe tener al menos 10 caracteres.')
+    .optional(),
+  slug: z
+    .string()
+    .min(3, 'El slug debe tener al menos 3 caracteres.')
+    .optional(),
 });
 ```
 
@@ -39,7 +50,9 @@ import { prisma } from '../utils/prisma.utils';
 import type { Post } from '@prisma/client';
 
 export class PostRepository {
-  async create(data: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>): Promise<Post> {
+  async create(
+    data: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<Post> {
     return prisma.post.create({ data });
   }
 
@@ -51,7 +64,10 @@ export class PostRepository {
     return prisma.post.findUnique({ where: { id } });
   }
 
-  async update(id: number, data: Partial<Omit<Post, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Post | null> {
+  async update(
+    id: number,
+    data: Partial<Omit<Post, 'id' | 'createdAt' | 'updatedAt'>>,
+  ): Promise<Post | null> {
     return prisma.post.update({ where: { id }, data });
   }
 
@@ -72,7 +88,9 @@ import { PostRepository } from '../repository/post.repository';
 export class PostService {
   constructor(private readonly postRepository: PostRepository) {}
 
-  async create(data: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>): Promise<Post> {
+  async create(
+    data: Omit<Post, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<Post> {
     return this.postRepository.create(data);
   }
 
@@ -84,7 +102,10 @@ export class PostService {
     return this.postRepository.getById(id);
   }
 
-  async update(id: number, data: Partial<Omit<Post, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Post | null> {
+  async update(
+    id: number,
+    data: Partial<Omit<Post, 'id' | 'createdAt' | 'updatedAt'>>,
+  ): Promise<Post | null> {
     return this.postRepository.update(id, data);
   }
 
@@ -107,7 +128,10 @@ export class PostController {
 
   async create(req: Request, res: Response) {
     try {
-      const post = await this.postService.create({ ...req.body, userId: req.user.id });
+      const post = await this.postService.create({
+        ...req.body,
+        userId: req.user.id,
+      });
       res.status(201).json({ data: post });
     } catch (error) {
       res.status(500).json({ error });
@@ -181,10 +205,14 @@ const postRepository = new PostRepository();
 const postService = new PostService(postRepository);
 const postController = new PostController(postService);
 
-router.post('/', ValidateBody(createPostSchema), (req, res) => postController.create(req, res));
+router.post('/', ValidateBody(createPostSchema), (req, res) =>
+  postController.create(req, res),
+);
 router.get('/', (req, res) => postController.getAll(req, res));
 router.get('/:id', (req, res) => postController.getById(req, res));
-router.patch('/:id', ValidateBody(updatePostSchema), (req, res) => postController.update(req, res));
+router.patch('/:id', ValidateBody(updatePostSchema), (req, res) =>
+  postController.update(req, res),
+);
 router.delete('/:id', (req, res) => postController.remove(req, res));
 
 export default router;
