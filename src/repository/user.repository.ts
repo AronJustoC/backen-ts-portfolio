@@ -11,21 +11,21 @@ export class UserRepository {
   /**
    * Busca y devuelve todos los usuarios de la base de datos.
    */
-  async findAll() {
+  async getAll() {
     return await this.prisma.user.findMany();
   }
   /**
    * Busca usuario por su ID.
    * @param id - El ID del usuario a buscar.
    */
-  async findById(id: number) {
+  async getById(id: number) {
     return await this.prisma.user.findUnique({ where: { id } });
   }
   /**
    * Busca usuario por su Email
    * @param email - El Email del usuario a buscar.
    */
-  async findByEmail(email: string) {
+  async getByEmail(email: string) {
     return await this.prisma.user.findUnique({ where: { email } });
   }
   /**

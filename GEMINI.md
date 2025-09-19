@@ -1,6 +1,8 @@
 # Gemini Code Assistant Project Overview
 
-This document provides a comprehensive overview of the Node.js project, designed to assist the Gemini Code Assistant in understanding the project's structure, technologies, and conventions.
+This document provides a comprehensive overview of the Node.js project, designed
+to assist the Gemini Code Assistant in understanding the project's structure,
+technologies, and conventions.
 
 ## Core Technologies
 
@@ -15,7 +17,8 @@ This document provides a comprehensive overview of the Node.js project, designed
 
 ## Project Structure
 
-The project follows a feature-based structure, with each feature having its own controller, service, repository, routes, and schema.
+The project follows a feature-based structure, with each feature having its own
+controller, service, repository, routes, and schema.
 
 ```
 src/
@@ -30,11 +33,16 @@ src/
 └── utils/
 ```
 
-- **`controllers`**: Handles incoming requests, validates data, and calls the appropriate services.
-- **`dtos`**: Data Transfer Objects, used for defining the shape of data transferred between different layers of the application.
-- **`middleware`**: Express middleware for handling cross-cutting concerns like CORS, error handling, authentication, and request validation.
-- **`repository`**: Interacts with the database, providing an abstraction layer for data access.
-- **`routes`**: Defines the API endpoints and maps them to the corresponding controllers.
+- **`controllers`**: Handles incoming requests, validates data, and calls the
+  appropriate services.
+- **`dtos`**: Data Transfer Objects, used for defining the shape of data
+  transferred between different layers of the application.
+- **`middleware`**: Express middleware for handling cross-cutting concerns like
+  CORS, error handling, authentication, and request validation.
+- **`repository`**: Interacts with the database, providing an abstraction layer
+  for data access.
+- **`routes`**: Defines the API endpoints and maps them to the corresponding
+  controllers.
 - **`schemas`**: Zod schemas for validating request bodies and other data.
 - **`services`**: Contains the business logic of the application.
 - **`types`**: TypeScript type definitions, including extensions for Express.
@@ -65,8 +73,10 @@ src/
 
 The project uses Jest for unit and integration testing.
 
-- **Unit tests:** Located in `test/unit`, these tests focus on individual functions and modules.
-- **Integration tests:** Located in `test/integration`, these tests cover the interaction between different parts of the application.
+- **Unit tests:** Located in `test/unit`, these tests focus on individual
+  functions and modules.
+- **Integration tests:** Located in `test/integration`, these tests cover the
+  interaction between different parts of the application.
 
 To run the tests, use the command `bun run test`.
 
@@ -79,11 +89,17 @@ The project uses ESLint for linting and Prettier for formatting.
 
 ## CI/CD
 
-The project uses GitHub Actions for continuous integration and deployment. The workflow is defined in `.github/workflows/deploy-production.yml`.
+The project uses GitHub Actions for continuous integration and deployment. The
+workflow is defined in `.github/workflows/deploy-production.yml`.
 
 ## Future Improvements
 
-- **Password Reset:** Implement a secure password reset mechanism, likely involving email verification.
-- **Email Verification:** Add a process to verify user email addresses upon registration.
-- **Role-Based Access Control (RBAC):** Introduce a role system to differentiate permissions between user types (e.g., admin, user).
-- **Logging:** Integrate a more robust logging solution for better monitoring, auditing, and error tracking.
+- **Password Reset:** Implement a secure password reset mechanism, likely
+  involving email verification.
+- **Email Verification:** Add a process to verify user email addresses upon
+  registration.
+- **Role-Based Access Control (RBAC):** Introduce a role system to differentiate
+  permissions between user types (e.g., admin, user).
+- **Logging:** Integrate a more robust logging solution for better monitoring,
+  auditing, and error tracking.
+

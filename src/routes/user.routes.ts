@@ -29,4 +29,3 @@ router.delete('/:id', (req, res) => userController.remove(req, res));
 // para evitar conflictos con el endpoint de registro público.
 
 export default router;
-

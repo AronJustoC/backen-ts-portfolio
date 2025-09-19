@@ -10,15 +10,15 @@ export class UserService {
   }
 
   async getAll() {
-    return this.userRepository.findAll();
+    return this.userRepository.getAll();
   }
 
   async getById(id: number) {
-    return this.userRepository.findById(id);
+    return this.userRepository.getById(id);
   }
 
   async getByEmail(email: string) {
-    return this.userRepository.findByEmail(email);
+    return this.userRepository.getByEmail(email);
   }
 
   async createUser(data: CreateUserDto) {

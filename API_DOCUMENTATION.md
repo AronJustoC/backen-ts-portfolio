@@ -1,14 +1,16 @@
 # Documentación de la API
 
-Esta documentación describe cómo interactuar con la API, incluyendo la autenticación, los endpoints disponibles y cómo gestionar variables en la terminal `fish`.
+Esta documentación describe cómo interactuar con la API, incluyendo la autenticación,
+los endpoints disponibles y cómo gestionar variables en la terminal `fish`.
 
 ## Autenticación
 
-Para acceder a los endpoints protegidos, primero debes registrar un usuario y luego iniciar sesión para obtener un token de acceso.
+Para acceder a los endpoints protegidos, primero debes registrar un usuario
+y luego iniciar sesión para obtener un token de acceso.
 
 ### 1. Registrar un Nuevo Usuario
 
-```fish
+```bash
 curl -X POST http://localhost:3000/api/auth/register \
 -H "Content-Type: application/json" \
 -d '{
@@ -18,38 +20,25 @@ curl -X POST http://localhost:3000/api/auth/register \
 }'
 ```
 
-### 2. Iniciar Sesión y Almacenar Tokens
+### 2. Iniciar Sesión
 
-Después de registrarte, inicia sesión para obtener un `accessToken` y un `refreshToken`. El siguiente comando extrae ambos tokens y los guarda en variables de entorno de `fish`.
+Después de registrarte, inicia sesión para obtener un `accessToken` y un `refreshToken`.
 
-```fish
-# Realiza la petición y guarda la respuesta
-set response (curl -s -X POST http://localhost:3000/api/auth/login \
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
 -H "Content-Type: application/json" \
 -d '{
   "email": "test@example.com",
   "password": "password123"
-}')
-
-# Extrae los tokens usando jq y los guarda en variables globales
-set -gx ACCESS_TOKEN (echo $response | jq -r '.token.token')
-set -gx REFRESH_TOKEN (echo $response | jq -r '.token.refresh_token')
-
-# Verifica que los tokens se hayan guardado
-echo "Access Token: $ACCESS_TOKEN"
-echo "Refresh Token: $REFRESH_TOKEN"
+}'
 ```
 
-## Uso de Variables en la Terminal Fish
-
-En `fish`, las variables de entorno se gestionan con el comando `set`. Para que una variable esté disponible en todas las sesiones de la terminal, se utiliza el flag `-gx` (global y exportable).
-
-- **Definir una variable**: `set -gx NOMBRE_VARIABLE "valor"`
-- **Usar una variable**: `$NOMBRE_VARIABLE`
+La respuesta incluirá el `accessToken` y el `refreshToken`. Para los siguientes ejemplos, asumiremos que has guardado estos tokens en variables de entorno (`$ACCESS_TOKEN` y `$REFRESH_TOKEN`).
 
 ## Endpoints de la API
 
-A continuación se muestran los endpoints disponibles. Las solicitudes a endpoints protegidos requieren un `accessToken`.
+A continuación se muestran los endpoints disponibles.
+Las solicitudes a endpoints protegidos requieren un `accessToken`.
 
 ### Endpoints de Autenticación
 
@@ -57,10 +46,12 @@ A continuación se muestran los endpoints disponibles. Las solicitudes a endpoin
 
 Usa el `REFRESH_TOKEN` para obtener un nuevo par de tokens.
 
-```fish
+```bash
 curl -X POST http://localhost:3000/api/auth/refresh \
 -H "Content-Type: application/json" \
--d "{\"refreshToken\": \"$REFRESH_TOKEN\"}"
+-d '{
+  "refreshToken": "$REFRESH_TOKEN"
+}'
 ```
 
 ### Endpoints de Usuario (Protegidos)
@@ -69,26 +60,24 @@ Para todas las siguientes solicitudes, asegúrate de tener el `$ACCESS_TOKEN` de
 
 #### Obtener Todos los Usuarios
 
-```fish
+```bash
 curl -X GET http://localhost:3000/api/users \
 -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 #### Obtener un Usuario por ID
 
-Primero, define el ID del usuario que quieres consultar.
-
-```fish
-set -gx USER_ID 1 # Reemplaza 1 con el ID real
-
-curl -X GET http://localhost:3000/api/users/$USER_ID \
+```bash
+# Reemplaza 1 con el ID del usuario que quieres consultar
+curl -X GET http://localhost:3000/api/users/1 \
 -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 #### Actualizar un Usuario
 
-```fish
-curl -X PATCH http://localhost:3000/api/users/$USER_ID \
+```bash
+# Reemplaza 1 con el ID del usuario que quieres actualizar
+curl -X PATCH http://localhost:3000/api/users/1 \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer $ACCESS_TOKEN" \
 -d '{
@@ -98,18 +87,64 @@ curl -X PATCH http://localhost:3000/api/users/$USER_ID \
 
 #### Eliminar un Usuario
 
-```fish
-curl -X DELETE http://localhost:3000/api/users/$USER_ID \
+```bash
+# Reemplaza 1 con el ID del usuario que quieres eliminar
+curl -X DELETE http://localhost:3000/api/users/1 \
 -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
-#### Eliminar las variables de terminal fish
+### Endpoints de Posts (Protegidos)
+
+Para todas las siguientes solicitudes, asegúrate de tener el `$ACCESS_TOKEN` definido.
+
+#### Crear un nuevo Post
 
 ```bash
-Eliminar el access token
-set -e ACCESS_TOKEN
-# Eliminar el refresh token
-set -e REFRESH_TOKEN
-# Eliminar el ID de usuario
-set -e USER_ID
+curl -X POST http://localhost:3000/api/posts \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-d '{
+  "title": "Mi primer Post desde cURL",
+  "content": "Este es el contenido de mi post, creado usando cURL.",
+  "slug": "mi-primer-post-curl"
+}'
+```
+
+#### Obtener todos los Posts
+
+```bash
+curl -X GET http://localhost:3000/api/posts \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+#### Obtener un Post por su ID
+
+Reemplaza `:id` con el ID del post que creaste.
+
+```bash
+curl -X GET http://localhost:3000/api/posts/:id \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+#### Actualizar un Post
+
+Reemplaza `:id` con el ID del post que quieres actualizar.
+
+```bash
+curl -X PATCH http://localhost:3000/api/posts/:id \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-d '{
+  "title": "Mi Post Actualizado",
+  "content": "El contenido ha sido actualizado."
+}'
+```
+
+#### Eliminar un Post
+
+Reemplaza `:id` con el ID del post que quieres eliminar.
+
+```bash
+curl -X DELETE http://localhost:3000/api/posts/:id \
+-H "Authorization: Bearer $ACCESS_TOKEN"
 ```
