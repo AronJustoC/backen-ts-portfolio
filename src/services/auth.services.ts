@@ -29,6 +29,7 @@ export class AuthService {
     const token = await Sign({
       id: user.id,
       email: user.email ?? '',
+      role: user.role,
     });
     return token;
   }

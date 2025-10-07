@@ -1,8 +1,12 @@
-import { User } from '@prisma/client';
+export interface UserPayload {
+  id: number;
+  role: string;
+}
+
 declare global {
   namespace Express {
     export interface Request {
-      user?: Omit<User, 'password'>;
+      user?: UserPayload;
     }
   }
 }

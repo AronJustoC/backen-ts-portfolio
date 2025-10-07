@@ -213,6 +213,7 @@ For security, there is no public API endpoint to create an admin. The recommende
 That user will now have admin privileges and can be used to test protected routes.
 
 ---
+
 ---
 
 ## Part 2: Implementing Persistent Sessions with Refresh Tokens
@@ -267,12 +268,12 @@ The login process will now generate two tokens: a short-lived `accessToken` and 
 const accessToken = jwt.sign(
   { id: user.id, role: user.role },
   process.env.JWT_SECRET!,
-  { expiresIn: '15m' }
+  { expiresIn: '15m' },
 );
 const refreshToken = jwt.sign(
   { id: user.id },
   process.env.REFRESH_TOKEN_SECRET!, // Use a different secret
-  { expiresIn: '7d' }
+  { expiresIn: '7d' },
 );
 
 // 2. Hash and save the refresh token to the database
@@ -287,7 +288,9 @@ return { accessToken, refreshToken };
 
 ```typescript
 // ... inside your login controller method
-const { accessToken, refreshToken } = await this.authService.loginUser(req.body);
+const { accessToken, refreshToken } = await this.authService.loginUser(
+  req.body,
+);
 
 // Send the refresh token in a secure HttpOnly cookie
 res.cookie('refreshToken', refreshToken, {
