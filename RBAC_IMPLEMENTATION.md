@@ -32,7 +32,7 @@ model User {
 }
 ```
 
-#### ► Checkpoint [ ]
+#### ► Checkpoint [X]
 
 After saving the file, run the migration command. A new migration folder should be created in `prisma/migrations`, and the command should complete without errors.
 
@@ -88,7 +88,7 @@ const token = generateToken(payload);
 // ... return the token
 ```
 
-#### ► Checkpoint [ ]
+#### ► Checkpoint [X]
 
 Log in as a user and copy the returned JWT. Decode it using a tool like [jwt.io](https://jwt.io/). The decoded payload section must contain the user's `id` and `role`.
 
@@ -135,7 +135,7 @@ export const checkRole = (requiredRole: string) => {
 };
 ```
 
-#### ► Checkpoint [ ]
+#### ► Checkpoint [X]
 
 The file `src/middleware/role.middleware.ts` should exist and contain the `checkRole` higher-order function.
 

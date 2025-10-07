@@ -5,6 +5,7 @@ import { AppError } from './error.utils';
 interface User {
   email: string;
   id: number;
+  role: string;
 }
 
 interface TokenResponse {

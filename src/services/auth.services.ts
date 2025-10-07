@@ -33,7 +33,7 @@ export class AuthService {
     });
     return token;
   }
-  async refreshToken(user: { id: number; email: string }) {
+  async refreshToken(user: { id: number; email: string; role: string }) {
     try {
       const token = await Sign(user);
       console.log(token);
@@ -59,6 +59,7 @@ export class AuthService {
     const tokenPayload = {
       id: user?.id,
       email: user.email ?? '',
+      role: user.role,
     };
     return Sign(tokenPayload);
   }

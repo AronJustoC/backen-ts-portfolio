@@ -25,5 +25,6 @@ export interface UserResponseDto {
   email: string;
   bio?: string;
   avatarUrl?: string;
+  role: string;
   createdAt: Date;
 }
