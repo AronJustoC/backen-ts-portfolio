@@ -3,6 +3,7 @@ import corsMiddleware from './middleware/cors.middleware';
 import { rateLimit } from 'express-rate-limit';
 import mainRouter from './routes/index';
 import { errorMiddleware } from './middleware/error.middleware';
+import './utils/redis.utils';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
