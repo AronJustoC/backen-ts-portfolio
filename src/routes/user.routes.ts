@@ -21,12 +21,12 @@ router.get('/', (req, res) => userController.get(req, res));
 router.get('/:id', (req, res) => userController.getById(req, res));
 
 // PATCH /api/users/:id -> Actualizar un usuario
-router.patch('/:id', checkRole('ADMIN'), (req, res) =>
+router.patch('/:id', checkRole(['ADMIN']), (req, res) =>
   userController.update(req, res),
 );
 
 // DELETE /api/users/:id -> Eliminar un usuario
-router.delete('/:id', checkRole('ADMIN'), (req, res) =>
+router.delete('/:id', checkRole(['ADMIN']), (req, res) =>
   userController.remove(req, res),
 );
 

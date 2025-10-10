@@ -206,4 +206,3 @@ Reemplaza `:id` con el ID del proyecto que quieres eliminar.
 curl -X DELETE http://localhost:3000/api/projects/:id \
 -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
-

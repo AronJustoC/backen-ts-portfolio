@@ -17,16 +17,16 @@ router.post('/', ValidateBody(createProjectSchema), (req, res) =>
   projectController.create(req, res),
 );
 router.get('/', (_req, res) => projectController.getAll(_req, res));
-router.get('/:id', checkRole('ADMIN'), (req, res) =>
+router.get('/:id', checkRole(['ADMIN']), (req, res) =>
   projectController.gerById(req, res),
 );
 router.patch(
   '/:id',
-  checkRole('ADMIN'),
+  checkRole(['ADMIN']),
   ValidateBody(updatePostSchema),
   (req, res) => projectController.update(req, res),
 );
-router.delete('/:id', checkRole('ADMIN'), (req, res) =>
+router.delete('/:id', checkRole(['ADMIN']), (req, res) =>
   projectController.delete(req, res),
 );
 

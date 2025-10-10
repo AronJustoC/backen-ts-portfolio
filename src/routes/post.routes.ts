@@ -20,7 +20,7 @@ router.get('/:id', (req, res) => postController.getById(req, res));
 router.patch('/:id', ValidateBody(updatePostSchema), (req, res) =>
   postController.update(req, res),
 );
-router.delete('/:id', checkRole('ADMIN'), (req, res) =>
+router.delete('/:id', checkRole(['ADMIN']), (req, res) =>
   postController.delete(req, res),
 );
 

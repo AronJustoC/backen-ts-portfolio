@@ -194,6 +194,7 @@ feat(auth): protect user deletion route with admin role
 ```
 
 ---
+
 ---
 
 ## Part 2: Implementing Persistent Sessions with Redis
@@ -215,6 +216,7 @@ First, set up Redis and install the client library in the project.
 3.  **Create Redis Utility:** Create a file to manage the Redis client instance.
 
     **Create File:** `src/utils/redis.utils.ts`
+
     ```typescript
     import Redis from 'ioredis';
 
@@ -286,7 +288,9 @@ return { accessToken, refreshToken };
 
 ```typescript
 // ... inside your login controller method
-const { accessToken, refreshToken } = await this.authService.loginUser(req.body);
+const { accessToken, refreshToken } = await this.authService.loginUser(
+  req.body,
+);
 
 // Send the refresh token in a secure HttpOnly cookie
 res.cookie('refreshToken', refreshToken, {
