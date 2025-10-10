@@ -5,6 +5,7 @@ import { PostController } from '../controllers/post.controller';
 import { ValidateBody } from '../middleware/validateBody.middleware';
 import { createPostSchema, updatePostSchema } from '../schemas/postSchema';
 import { prisma } from '../utils/prisma.utils';
+import { checkRole } from '../middleware/role.middleware';
 
 const router = Router();
 const postRepository = new PostRepository(prisma);
@@ -19,6 +20,8 @@ router.get('/:id', (req, res) => postController.getById(req, res));
 router.patch('/:id', ValidateBody(updatePostSchema), (req, res) =>
   postController.update(req, res),
 );
-router.delete('/:id', (req, res) => postController.delete(req, res));
+router.delete('/:id', checkRole('ADMIN'), (req, res) =>
+  postController.delete(req, res),
+);
 
 export default router;

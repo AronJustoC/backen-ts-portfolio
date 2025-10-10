@@ -148,3 +148,62 @@ Reemplaza `:id` con el ID del post que quieres eliminar.
 curl -X DELETE http://localhost:3000/api/posts/:id \
 -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
+
+### Endpoints de Proyectos (Protegidos)
+
+Para todas las siguientes solicitudes, asegúrate de tener el `$ACCESS_TOKEN` definido.
+
+#### Crear un nuevo Proyecto
+
+```bash
+curl -X POST http://localhost:3000/api/projects \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-d '{
+  "title": "Mi primer Proyecto desde cURL",
+  "description": "Este es el contenido de mi proyecto, creado usando cURL.",
+  "imageUrl": "http://example.com/image.png",
+  "repoUrl": "http://github.com/user/repo",
+  "liveUrl": "http://example.com"
+}'
+```
+
+#### Obtener todos los Proyectos
+
+```bash
+curl -X GET http://localhost:3000/api/projects \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+#### Obtener un Proyecto por su ID
+
+Reemplaza `:id` con el ID del proyecto que creaste.
+
+```bash
+curl -X GET http://localhost:3000/api/projects/:id \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+#### Actualizar un Proyecto
+
+Reemplaza `:id` con el ID del proyecto que quieres actualizar.
+
+```bash
+curl -X PATCH http://localhost:3000/api/projects/:id \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-d '{
+  "title": "Mi Proyecto Actualizado",
+  "description": "El contenido ha sido actualizado."
+}'
+```
+
+#### Eliminar un Proyecto
+
+Reemplaza `:id` con el ID del proyecto que quieres eliminar.
+
+```bash
+curl -X DELETE http://localhost:3000/api/projects/:id \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+```
+

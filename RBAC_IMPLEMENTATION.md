@@ -194,75 +194,73 @@ feat(auth): protect user deletion route with admin role
 ```
 
 ---
-
-### Appendix: Creating an Admin User
-
-For security, there is no public API endpoint to create an admin. The recommended way to create your first admin is manually.
-
-1. **Register a new user** through the standard registration endpoint.
-2. **Launch Prisma Studio** with the following command:
-
-   ```sh
-   bunx prisma studio
-   ```
-
-3. In the web interface that opens, select the **User** model.
-4. Find the user you just created and click on their `role` field.
-5. Change the value from `USER` to `ADMIN` and save the change.
-
-That user will now have admin privileges and can be used to test protected routes.
-
 ---
 
----
+## Part 2: Implementing Persistent Sessions with Redis
 
-## Part 2: Implementing Persistent Sessions with Refresh Tokens
+This section explains how to implement a refresh token system using Redis. This is the recommended, high-performance approach for managing persistent sessions securely.
 
-This section explains how to implement a refresh token system to allow for persistent user sessions without compromising security.
+### Step 5: Configure Redis and Client
 
-### Step 5: Update Schema for Refresh Token
+First, set up Redis and install the client library in the project.
 
-We need to store a hashed version of the refresh token in the database. This allows us to revoke it, providing a secure way to log users out.
+1.  **Run Redis:** For local development, the easiest way is with Docker.
+    ```sh
+    docker run -d -p 6379:6379 --name my-redis redis
+    ```
+2.  **Install Redis Client:** We will use `ioredis`.
+    ```sh
+    bun add ioredis
+    ```
+3.  **Create Redis Utility:** Create a file to manage the Redis client instance.
 
-**File:** `prisma/schema.prisma`
+    **Create File:** `src/utils/redis.utils.ts`
+    ```typescript
+    import Redis from 'ioredis';
 
-```prisma
-model User {
-  // ... existing fields
-  role         Role     @default(USER)
-  refreshToken String?  @unique // New field for the hashed refresh token
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-```
+    // It's recommended to use environment variables for connection details
+    const redisClient = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: Number(process.env.REDIS_PORT) || 6379,
+      maxRetriesPerRequest: null, // Important for handling connection drops
+    });
+
+    redisClient.on('connect', () => {
+      console.log('Connected to Redis successfully!');
+    });
+
+    redisClient.on('error', (error) => {
+      console.error('Redis connection error:', error);
+    });
+
+    export default redisClient;
+    ```
 
 #### ► Checkpoint [ ]
 
-Run the database migration. A new migration folder should be created, and the command should complete successfully.
-
-```sh
-bun run prisma:migrate:dev --name add_refresh_token
-```
+After starting the application, you should see the "Connected to Redis successfully!" message in your console. `ioredis` should be listed as a dependency in your `package.json`.
 
 #### ► Git Commit
 
 ```bash
-feat(auth): add refresh token to user schema
+feat(config): add redis client and configuration
 
-- Adds an optional `refreshToken` field to the `User` model.
-- This field will store a hashed version of the user's refresh token, allowing for session revocation.
-- Includes the generated database migration files.
+- Adds `ioredis` library to handle Redis connections.
+- Creates a reusable Redis client utility with connection logic and error handling.
+- Recommends using Docker for local Redis instance.
 ```
 
 ---
 
-### Step 6: Update Login Logic for Refresh Tokens
+### Step 6: Update Login Logic for Redis
 
-The login process will now generate two tokens: a short-lived `accessToken` and a long-lived `refreshToken`. The refresh token will be sent as a secure `HttpOnly` cookie.
+The login process will now store the `refreshToken` in Redis instead of the main database.
 
 **File:** `src/services/auth.services.ts`
 
 ```typescript
+// ... import redisClient from '../utils/redis.utils';
+
 // ... inside your login service
 // 1. Generate tokens with different secrets and lifespans
 const accessToken = jwt.sign(
@@ -276,21 +274,19 @@ const refreshToken = jwt.sign(
   { expiresIn: '7d' },
 );
 
-// 2. Hash and save the refresh token to the database
-const hashedRefreshToken = await hashData(refreshToken); // Assumes a hashing utility
-await this.userRepository.update(user.id, { refreshToken: hashedRefreshToken });
+// 2. Store the refresh token in Redis with a 7-day expiration
+const redisKey = `session:${user.id}`;
+await redisClient.set(redisKey, refreshToken, 'EX', 7 * 24 * 60 * 60);
 
 // 3. Return both tokens to the controller
 return { accessToken, refreshToken };
 ```
 
-**File:** `src/controllers/auth.controller.ts`
+**File:** `src/controllers/auth.controller.ts` (This logic remains the same)
 
 ```typescript
 // ... inside your login controller method
-const { accessToken, refreshToken } = await this.authService.loginUser(
-  req.body,
-);
+const { accessToken, refreshToken } = await this.authService.loginUser(req.body);
 
 // Send the refresh token in a secure HttpOnly cookie
 res.cookie('refreshToken', refreshToken, {
@@ -306,57 +302,45 @@ res.json({ accessToken });
 
 #### ► Checkpoint [ ]
 
-After logging in, inspect your browser's developer tools. Under the "Application" > "Cookies" tab for your backend's domain, you should see a new `HttpOnly` cookie named `refreshToken`. The JSON response from the login request should only contain the `accessToken`.
+After logging in, use a Redis client (`redis-cli`) and run `GET session:<userId>`. The command should return the generated refresh token. The `HttpOnly` cookie should also be present in the browser.
 
 #### ► Git Commit
 
 ```bash
-feat(auth): implement refresh token generation on login
+feat(auth): store refresh token in redis on login
 
-- Modifies the login service to generate both a short-lived access token and a long-lived refresh token.
-- The refresh token is hashed and stored in the database for the user.
-- The login controller now sends the refresh token as a secure, HttpOnly cookie and the access token in the JSON response body.
+- Modifies the login service to generate both access and refresh tokens.
+- The refresh token is now stored in Redis with the user's ID as the key and a 7-day expiration.
+- This decouples session management from the primary database.
 ```
 
 ---
 
-### Step 7: Create Refresh Token Endpoint
+### Step 7: Create Refresh Token Endpoint with Redis
 
-This new endpoint will use the `refreshToken` from the cookie to issue a new `accessToken`.
+This endpoint will now validate the `refreshToken` against the one stored in Redis.
 
-**File:** `src/routes/auth.routes.ts`
-
-```typescript
-// Add a new route for refreshing the token
-router.post('/refresh-token', authController.refreshToken);
-```
-
-**File:** `src/controllers/auth.controller.ts` & `src/services/auth.services.ts`
+**File:** `src/services/auth.services.ts`
 
 ```typescript
-// In AuthController
-async refreshToken(req: Request, res: Response) {
-  const { refreshToken } = req.cookies;
-  if (!refreshToken) {
-    return res.status(401).json({ message: 'Refresh token not found' });
-  }
-  const newAccessToken = await this.authService.refreshAccessToken(refreshToken);
-  res.json({ accessToken: newAccessToken });
-}
-
 // In AuthService
 async refreshAccessToken(token: string) {
   // 1. Verify the token signature and expiration
   const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!) as { id: string };
 
-  // 2. Find the user and compare the stored hash with the received token
+  // 2. Check if token exists in Redis and matches the provided one
+  const redisKey = `session:${decoded.id}`;
+  const storedToken = await redisClient.get(redisKey);
+
+  if (!storedToken || storedToken !== token) {
+    throw new Error('Invalid or expired refresh token');
+  }
+
+  // 3. Find user to get role for the new payload
   const user = await this.userRepository.findById(decoded.id);
-  if (!user || !user.refreshToken) throw new Error('Invalid token');
+  if (!user) throw new Error('User not found');
 
-  const isTokenMatch = await compareData(token, user.refreshToken); // Assumes a compare utility
-  if (!isTokenMatch) throw new Error('Invalid token');
-
-  // 3. Issue a new access token
+  // 4. Issue a new access token
   const newAccessToken = jwt.sign(
     { id: user.id, role: user.role },
     process.env.JWT_SECRET!,
@@ -368,32 +352,36 @@ async refreshAccessToken(token: string) {
 
 #### ► Checkpoint [ ]
 
-With a valid `refreshToken` cookie present in your browser, send a `POST` request to the `/api/auth/refresh-token` endpoint. The response should be a JSON object containing a new, valid `accessToken`.
+With a valid `refreshToken` cookie, send a `POST` request to `/api/auth/refresh-token`. The response should be a new `accessToken`. If you manually delete the key in Redis and try again, the request must fail.
 
 #### ► Git Commit
 
 ```bash
-feat(auth): create endpoint to refresh access tokens
+feat(auth): validate refresh token against redis
 
-- Adds a new `POST /api/auth/refresh-token` endpoint.
-- The endpoint uses the `refreshToken` from the HttpOnly cookie to validate the user's session.
-- If the refresh token is valid and matches the stored hash in the database, it generates and returns a new, short-lived access token.
+- Updates the `refreshAccessToken` service to validate the token against the session stored in Redis.
+- The endpoint now ensures that the refresh token is not only cryptographically valid but also active in the session store.
+- This prevents the use of stolen or old refresh tokens.
 ```
 
 ---
 
-### Step 8: Implement Secure Logout
+### Step 8: Implement Secure Logout with Redis
 
-A secure logout must invalidate the session on the server side. We do this by clearing the stored refresh token.
+A secure logout now means deleting the session from Redis.
 
-**File:** `src/routes/auth.routes.ts`
+**File:** `src/services/auth.services.ts`
 
 ```typescript
-// Add a new route for logging out
-router.post('/logout', authMiddleware, authController.logout);
+// In AuthService
+async logoutUser(userId: string) {
+  // Invalidate the session by deleting the key from Redis
+  const redisKey = `session:${userId}`;
+  await redisClient.del(redisKey);
+}
 ```
 
-**File:** `src/controllers/auth.controller.ts` & `src/services/auth.services.ts`
+**File:** `src/controllers/auth.controller.ts` (This logic remains the same)
 
 ```typescript
 // In AuthController
@@ -403,24 +391,18 @@ async logout(req: Request, res: Response) {
   res.clearCookie('refreshToken');
   res.status(200).json({ message: 'Logged out successfully' });
 }
-
-// In AuthService
-async logoutUser(userId: string) {
-  // Invalidate the session by clearing the refresh token from the database
-  await this.userRepository.update(userId, { refreshToken: null });
-}
 ```
 
 #### ► Checkpoint [ ]
 
-After calling the `/api/auth/logout` endpoint, the `refreshToken` cookie should be removed from the browser. Any subsequent attempt to use the `/api/auth/refresh-token` endpoint should fail with a `401` or `403` error.
+After calling `/api/auth/logout`, the `refreshToken` cookie should be gone from the browser. Use `redis-cli` to confirm that the `session:<userId>` key has been deleted. Any subsequent attempt to refresh the token must fail.
 
 #### ► Git Commit
 
 ```bash
-feat(auth): implement secure logout by revoking refresh token
+feat(auth): implement secure logout by deleting redis session
 
 - Creates a `POST /api/auth/logout` endpoint.
-- The user's stored refresh token hash is cleared from the database, invalidating the session on the server.
+- The user's session is invalidated by deleting the corresponding key from Redis.
 - The `refreshToken` cookie is cleared from the user's browser.
 ```
