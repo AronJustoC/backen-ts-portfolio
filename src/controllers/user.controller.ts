@@ -21,7 +21,7 @@ export class UserController {
   }
   async getById(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = Number(req.params.id);
       if (isNaN(id)) {
         return res
           .status(400)
@@ -52,7 +52,7 @@ export class UserController {
   }
   async update(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = Number(req.params.id);
       if (isNaN(id)) {
         return res
           .status(400)
@@ -74,7 +74,7 @@ export class UserController {
   }
   async remove(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
+      const id = Number(req.params.id);
       await this.userService.remove(id);
       res.status(201).json({ data: 'ok' });
     } catch (error) {
