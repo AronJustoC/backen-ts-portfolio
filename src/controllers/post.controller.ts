@@ -36,6 +36,17 @@ export class PostController {
     }
   }
 
+  async getBySlug(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+      const post = await this.postService.getBySlug(slug);
+      if (!post) return res.status(404).json({ message: 'Post not found' });
+      res.status(200).json({ post });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
   async update(req: Request, res: Response) {
     try {
       if (!req.user) return res.status(401).json({ message: 'Unauthorized' });

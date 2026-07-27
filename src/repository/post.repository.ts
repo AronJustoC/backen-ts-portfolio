@@ -44,6 +44,13 @@ export class PostRepository {
     return await this.prisma.post.findUnique({ where: { id } });
   }
 
+  async getBySlug(slug: string): Promise<Post | null> {
+    return await this.prisma.post.findUnique({
+      where: { slug },
+      include: { author: true },
+    });
+  }
+
   async delete(id: number, userId: number): Promise<Post | null> {
     const deletedPost = await this.prisma.post.findUnique({
       where: { id },

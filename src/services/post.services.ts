@@ -17,6 +17,10 @@ export class PostService {
     return this.postRepository.getById(id);
   }
 
+  async getBySlug(slug: string): Promise<Post | null> {
+    return this.postRepository.getBySlug(slug);
+  }
+
   async update(
     id: number,
     userId: number,

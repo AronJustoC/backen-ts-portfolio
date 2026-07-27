@@ -13,6 +13,8 @@ const projectRepository = new ProjectRepository(prisma);
 const projectService = new ProjectService(projectRepository);
 const projectController = new ProjectController(projectService);
 
+export { projectController };
+
 router.post('/', ValidateBody(createProjectSchema), (req, res) =>
   projectController.create(req, res),
 );

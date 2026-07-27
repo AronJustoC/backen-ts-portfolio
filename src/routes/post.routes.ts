@@ -12,6 +12,8 @@ const postRepository = new PostRepository(prisma);
 const postService = new PostService(postRepository);
 const postController = new PostController(postService);
 
+export { postController };
+
 router.post('/', ValidateBody(createPostSchema), (req, res) =>
   postController.create(req, res),
 );
