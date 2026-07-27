@@ -14,8 +14,8 @@ export class ProjectController {
   }
   async getAll(_req: Request, res: Response) {
     try {
-      const posts = await this.projectService.getAll();
-      res.status(200).json({ posts });
+      const projects = await this.projectService.getAll();
+      res.status(200).json({ projects });
     } catch (error) {
       res.status(500).json({ error });
     }
