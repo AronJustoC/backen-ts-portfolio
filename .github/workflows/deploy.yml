@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Build
+        run: npm run build
+
+      - name: Trigger EasyPanel deploy
+        run: curl -fsSL -X POST "${{ secrets.EASYPANEL_DEPLOY_WEBHOOK }}"
