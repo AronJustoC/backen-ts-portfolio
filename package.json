@@ -31,7 +31,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch --env-file=.env src/main.ts",
-    "start": "node dist/main.mjs",
+    "start": "node dist/main.js",
     "build": "tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -41,8 +41,6 @@
     "prisma:generate": "prisma generate",
     "prepare": "husky"
   },
-  "type": "module",
-  "exports": "./dist/index.mjs",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
