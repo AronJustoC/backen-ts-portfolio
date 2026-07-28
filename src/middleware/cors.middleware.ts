@@ -1,7 +1,7 @@
 import cors from 'cors';
 
 const corsOptions = {
-  origin: 'http://localhost:4321',
+  origin: process.env.FRONTEND_ORIGIN ?? 'http://localhost:4321',
   credentials: true,
 };
 

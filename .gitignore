@@ -4,15 +4,10 @@
 /out
 /coverage
 
-# Bun
-bun.lock
-bun.lockb
-
 #husky
 .husky/
 
 # Prisma
-prisma/migrations/
 prisma/dev.db
 prisma/dev.db-journal
 
