@@ -35,7 +35,14 @@ export class PostRepository {
   async getAll(): Promise<Post[]> {
     return await this.prisma.post.findMany({
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            username: true,
+            bio: true,
+            imageUrl: true,
+          },
+        },
       },
     });
   }
@@ -47,7 +54,16 @@ export class PostRepository {
   async getBySlug(slug: string): Promise<Post | null> {
     return await this.prisma.post.findUnique({
       where: { slug },
-      include: { author: true },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            bio: true,
+            imageUrl: true,
+          },
+        },
+      },
     });
   }
 

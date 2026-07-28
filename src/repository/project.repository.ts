@@ -38,7 +38,14 @@ export class ProjectRepository {
   async getAll(): Promise<Project[]> {
     return await this.prisma.project.findMany({
       include: {
-        owner: true,
+        owner: {
+          select: {
+            id: true,
+            username: true,
+            bio: true,
+            imageUrl: true,
+          },
+        },
       },
     });
   }
