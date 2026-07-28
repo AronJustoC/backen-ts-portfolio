@@ -39,6 +39,9 @@ export class PostController {
   async getBySlug(req: Request, res: Response) {
     try {
       const { slug } = req.params;
+      if (typeof slug !== 'string') {
+        return res.status(400).json({ message: 'Invalid slug' });
+      }
       const post = await this.postService.getBySlug(slug);
       if (!post) return res.status(404).json({ message: 'Post not found' });
       res.status(200).json({ post });
