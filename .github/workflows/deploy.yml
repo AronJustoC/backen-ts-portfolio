@@ -32,6 +32,13 @@ jobs:
           printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+      - name: Remember previous image
+        run: |
+          old=$(ssh -o BatchMode=yes -o IdentitiesOnly=yes -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            'docker image inspect --format "{{.Id}}" localhost/adnwebs-api:latest 2>/dev/null || true')
+          echo "OLD_IMAGE=$old" >> "$GITHUB_ENV"
+
       - name: Upload image
         run: |
           docker save "$IMAGE" | gzip | ssh -o BatchMode=yes -o IdentitiesOnly=yes \
@@ -55,6 +62,13 @@ jobs:
           done
           echo "La API no respondió 200 tras el despliegue" >&2
           exit 1
+
+      - name: Remove previous image
+        if: success()
+        run: |
+          ssh -o BatchMode=yes -o IdentitiesOnly=yes -i ~/.ssh/deploy_key \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "old='$OLD_IMAGE'; new=\$(docker image inspect --format '{{.Id}}' localhost/adnwebs-api:latest); [ -n \"\$old\" ] && [ \"\$old\" != \"\$new\" ] && docker rmi \"\$old\" || true"
 
       - name: Cleanup
         if: always()
