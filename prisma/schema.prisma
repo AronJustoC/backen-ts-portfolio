@@ -37,6 +37,28 @@ model Post {
 
   userId Int
   author User @relation(fields: [userId], references: [id])
+
+  comentarios Comentario[]
+}
+
+enum EstadoComentario {
+  PENDIENTE
+  PUBLICADO
+}
+
+model Comentario {
+  id        Int              @id @default(autoincrement())
+  postId    Int
+  nombre    String           @db.VarChar(80)
+  correo    String?          @db.VarChar(254)
+  cuerpo    String
+  estado    EstadoComentario @default(PENDIENTE)
+  ipHash    String?          @db.VarChar(64)
+  createdAt DateTime         @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId, estado])
 }
 
 model Project {
