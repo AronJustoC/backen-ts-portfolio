@@ -3,6 +3,7 @@ import authRouter from './auth.routes';
 import userRouter from './user.routes';
 import postRouter, { postController } from './post.routes';
 import projectRouter, { projectController } from './project.routes';
+import uploadRouter from './upload.routes';
 import { validateToken } from '../middleware/auth.middleware';
 import { checkRole } from '../middleware/role.middleware';
 import { ValidateBody } from '../middleware/validateBody.middleware';
@@ -61,4 +62,5 @@ router.delete(
 
 router.use('/posts', validateToken, postRouter);
 router.use('/projects', validateToken, projectRouter);
+router.use('/uploads', validateToken, uploadRouter);
 export default router;
