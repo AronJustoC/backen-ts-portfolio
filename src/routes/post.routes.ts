@@ -14,13 +14,19 @@ const postController = new PostController(postService);
 
 export { postController };
 
-router.post('/', ValidateBody(createPostSchema), (req, res) =>
-  postController.create(req, res),
+router.post(
+  '/',
+  checkRole(['ADMIN']),
+  ValidateBody(createPostSchema),
+  (req, res) => postController.create(req, res),
 );
 router.get('/', (req, res) => postController.getAll(req, res));
 router.get('/:id', (req, res) => postController.getById(req, res));
-router.patch('/:id', ValidateBody(updatePostSchema), (req, res) =>
-  postController.update(req, res),
+router.patch(
+  '/:id',
+  checkRole(['ADMIN']),
+  ValidateBody(updatePostSchema),
+  (req, res) => postController.update(req, res),
 );
 router.delete('/:id', checkRole(['ADMIN']), (req, res) =>
   postController.delete(req, res),

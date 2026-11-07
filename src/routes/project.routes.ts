@@ -15,8 +15,11 @@ const projectController = new ProjectController(projectService);
 
 export { projectController };
 
-router.post('/', ValidateBody(createProjectSchema), (req, res) =>
-  projectController.create(req, res),
+router.post(
+  '/',
+  checkRole(['ADMIN']),
+  ValidateBody(createProjectSchema),
+  (req, res) => projectController.create(req, res),
 );
 router.get('/', (_req, res) => projectController.getAll(_req, res));
 router.get('/:id', checkRole(['ADMIN']), (req, res) =>
