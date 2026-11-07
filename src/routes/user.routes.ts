@@ -15,10 +15,10 @@ const userController = new UserController(userService);
 // --- Rutas para gestionar usuarios (protegidas por token) ---
 
 // GET /api/users -> Obtener todos los usuarios
-router.get('/', (req, res) => userController.get(req, res));
+router.get('/', checkRole(['ADMIN']), (req, res) => userController.get(req, res));
 
 // GET /api/users/:id -> Obtener un usuario por su ID
-router.get('/:id', (req, res) => userController.getById(req, res));
+router.get('/:id', checkRole(['ADMIN']), (req, res) => userController.getById(req, res));
 
 // PATCH /api/users/:id -> Actualizar un usuario
 router.patch('/:id', checkRole(['ADMIN']), (req, res) =>
