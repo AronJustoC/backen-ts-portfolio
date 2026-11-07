@@ -24,6 +24,9 @@ model User {
 
   posts    Post[]
   projects Project[]
+  courses  Course[]
+  enrollments    Enrollment[]
+  lessonProgress LessonProgress[]
 }
 
 model Post {
@@ -72,4 +75,76 @@ model Project {
 
   userId Int
   owner  User @relation(fields: [userId], references: [id])
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  publicado   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId Int
+  author User @relation(fields: [userId], references: [id])
+
+  lessons     Lesson[]
+  enrollments Enrollment[]
+}
+
+model Lesson {
+  id            Int      @id @default(autoincrement())
+  courseId      Int
+  title         String
+  orden         Int
+  content       String
+  videoUrl      String?
+  attachmentUrl String?
+  duration      Int?
+  createdAt     DateTime @default(now())
+
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters Chapter[]
+  progress LessonProgress[]
+
+  @@unique([courseId, orden])
+  @@index([courseId])
+}
+
+model Chapter {
+  id       Int    @id @default(autoincrement())
+  lessonId Int
+  time     Int
+  title    String
+  orden    Int
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, orden])
+  @@index([lessonId])
+}
+
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  courseId  Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  lessonId     Int
+  completed    Boolean  @default(false)
+  lastPosition Int      @default(0)
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
 }

@@ -4,6 +4,8 @@ import userRouter from './user.routes';
 import postRouter, { postController } from './post.routes';
 import projectRouter, { projectController } from './project.routes';
 import uploadRouter from './upload.routes';
+import courseRouter, { courseController } from './course.routes';
+import meRouter from './me.routes';
 import { validateToken } from '../middleware/auth.middleware';
 import { checkRole } from '../middleware/role.middleware';
 import { ValidateBody } from '../middleware/validateBody.middleware';
@@ -39,6 +41,12 @@ router.post(
 router.get('/projects/public', (req, res) =>
   projectController.getAll(req, res),
 );
+router.get('/courses/public', (req, res) =>
+  courseController.listPublic(req, res),
+);
+router.get('/courses/public/:slug', (req, res) =>
+  courseController.getPublicBySlug(req, res),
+);
 
 // Admin moderation endpoints (auth required)
 router.get(
@@ -62,5 +70,7 @@ router.delete(
 
 router.use('/posts', validateToken, postRouter);
 router.use('/projects', validateToken, projectRouter);
+router.use('/courses', validateToken, courseRouter);
+router.use('/me', validateToken, meRouter);
 router.use('/uploads', validateToken, uploadRouter);
 export default router;
