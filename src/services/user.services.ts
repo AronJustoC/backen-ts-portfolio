@@ -28,7 +28,10 @@ export class UserService {
 
   async updateUser(id: number, data: UpdateUserDto) {
     await this.getById(id);
-    return this.userRepository.update(id, data);
+    const password = data.password
+      ? await hashPassword(data.password)
+      : undefined;
+    return this.userRepository.update(id, { ...data, password });
   }
 
   async remove(id: number) {
