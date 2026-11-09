@@ -148,3 +148,34 @@ model LessonProgress {
 
   @@unique([userId, lessonId])
 }
+
+model StoreCategory {
+  id          Int           @id @default(autoincrement())
+  slug        String        @unique
+  name        String
+  description String?
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  products StoreProduct[]
+}
+
+model StoreProduct {
+  id          Int           @id @default(autoincrement())
+  slug        String        @unique
+  name        String
+  description String
+  priceCents  Int
+  categoryId  Int
+  images      String[]
+  variants    Json
+  soldOut     Boolean       @default(false)
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  category StoreCategory @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+}

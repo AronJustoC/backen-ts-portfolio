@@ -39,6 +39,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:generate": "prisma generate",
+    "seed:store": "tsx scripts/seed-store.ts",
     "prepare": "husky"
   },
   "dependencies": {
