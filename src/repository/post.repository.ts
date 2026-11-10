@@ -32,8 +32,9 @@ export class PostRepository {
     });
   }
 
-  async getAll(): Promise<Post[]> {
+  async getAll(onlyPublic = false): Promise<Post[]> {
     return await this.prisma.post.findMany({
+      where: onlyPublic ? { publicado: true } : {},
       include: {
         author: {
           select: {
@@ -51,9 +52,9 @@ export class PostRepository {
     return await this.prisma.post.findUnique({ where: { id } });
   }
 
-  async getBySlug(slug: string): Promise<Post | null> {
-    return await this.prisma.post.findUnique({
-      where: { slug },
+  async getBySlug(slug: string, onlyPublic = false): Promise<Post | null> {
+    return await this.prisma.post.findFirst({
+      where: { slug, ...(onlyPublic ? { publicado: true } : {}) },
       include: {
         author: {
           select: {

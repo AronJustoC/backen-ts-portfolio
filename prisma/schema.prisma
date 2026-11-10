@@ -35,6 +35,7 @@ model Post {
   content   String
   slug      String   @unique
   imageUrl  String?
+  publicado Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

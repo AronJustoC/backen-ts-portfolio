@@ -3,8 +3,8 @@ import { prisma } from '../utils/prisma.utils';
 export async function postIdPublicadoPorSlug(
   slug: string,
 ): Promise<number | null> {
-  const post = await prisma.post.findUnique({
-    where: { slug },
+  const post = await prisma.post.findFirst({
+    where: { slug, publicado: true },
     select: { id: true },
   });
   return post?.id ?? null;

@@ -9,16 +9,16 @@ export class PostService {
     return this.postRepository.create(authorId, postData);
   }
 
-  async getAll(): Promise<Post[]> {
-    return this.postRepository.getAll();
+  async getAll(onlyPublic?: boolean): Promise<Post[]> {
+    return this.postRepository.getAll(onlyPublic);
   }
 
   async getById(id: number): Promise<Post | null> {
     return this.postRepository.getById(id);
   }
 
-  async getBySlug(slug: string): Promise<Post | null> {
-    return this.postRepository.getBySlug(slug);
+  async getBySlug(slug: string, onlyPublic?: boolean): Promise<Post | null> {
+    return this.postRepository.getBySlug(slug, onlyPublic);
   }
 
   async update(

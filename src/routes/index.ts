@@ -25,9 +25,11 @@ router.use('/auth', authRouter);
 router.use('/users', validateToken, userRouter);
 
 // Public read-only endpoints consumed by the Astro frontend (no auth)
-router.get('/posts/public', (req, res) => postController.getAll(req, res));
+router.get('/posts/public', (req, res) =>
+  postController.getAllPublic(req, res),
+);
 router.get('/posts/public/:slug', (req, res) =>
-  postController.getBySlug(req, res),
+  postController.getBySlugPublic(req, res),
 );
 router.get('/posts/public/:slug/comentarios', (req, res) =>
   listarPublicos(req, res),
