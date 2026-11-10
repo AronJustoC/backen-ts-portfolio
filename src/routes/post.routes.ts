@@ -20,8 +20,12 @@ router.post(
   ValidateBody(createPostSchema),
   (req, res) => postController.create(req, res),
 );
-router.get('/', (req, res) => postController.getAll(req, res));
-router.get('/:id', (req, res) => postController.getById(req, res));
+router.get('/', checkRole(['ADMIN']), (req, res) =>
+  postController.getAll(req, res),
+);
+router.get('/:id', checkRole(['ADMIN']), (req, res) =>
+  postController.getById(req, res),
+);
 router.patch(
   '/:id',
   checkRole(['ADMIN']),

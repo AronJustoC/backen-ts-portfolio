@@ -12,13 +12,29 @@ export class PostController {
       const post = await this.postService.create(req.user?.id, req.body);
       res.status(201).json({ post });
     } catch (error) {
+      const code = (error as { code?: string })?.code;
+      if (code === 'P2002') {
+        return res.status(409).json({ message: 'El slug ya existe' });
+      }
+      if (code === 'P2025') {
+        return res.status(404).json({ message: 'Post no encontrado' });
+      }
       res.status(500).json({ error });
     }
   }
 
   async getAll(_req: Request, res: Response) {
     try {
-      const posts = await this.postService.getAll();
+      const posts = await this.postService.getAll(false);
+      res.status(200).json({ posts });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
+  async getAllPublic(_req: Request, res: Response) {
+    try {
+      const posts = await this.postService.getAll(true);
       res.status(200).json({ posts });
     } catch (error) {
       res.status(500).json({ error });
@@ -42,7 +58,21 @@ export class PostController {
       if (typeof slug !== 'string') {
         return res.status(400).json({ message: 'Invalid slug' });
       }
-      const post = await this.postService.getBySlug(slug);
+      const post = await this.postService.getBySlug(slug, false);
+      if (!post) return res.status(404).json({ message: 'Post not found' });
+      res.status(200).json({ post });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
+  async getBySlugPublic(req: Request, res: Response) {
+    try {
+      const { slug } = req.params;
+      if (typeof slug !== 'string') {
+        return res.status(400).json({ message: 'Invalid slug' });
+      }
+      const post = await this.postService.getBySlug(slug, true);
       if (!post) return res.status(404).json({ message: 'Post not found' });
       res.status(200).json({ post });
     } catch (error) {
@@ -65,6 +95,13 @@ export class PostController {
           .json({ message: 'Post not found or unauthorized' });
       res.status(200).json({ post: updatePost });
     } catch (error) {
+      const code = (error as { code?: string })?.code;
+      if (code === 'P2002') {
+        return res.status(409).json({ message: 'El slug ya existe' });
+      }
+      if (code === 'P2025') {
+        return res.status(404).json({ message: 'Post no encontrado' });
+      }
       res.status(500).json({ error });
     }
   }

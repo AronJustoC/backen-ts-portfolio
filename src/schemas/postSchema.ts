@@ -7,6 +7,7 @@ export const createPostSchema = z.object({
     .min(10, 'El contenido debe tener al menos 10 caracteres.'),
   imageUrl: z.url('Debe ser una URL de la imagen valida').optional(),
   slug: z.string().min(3, 'El slug debe tener al manos 3 caracteres.'),
+  publicado: z.boolean().optional(),
 });
 
 export const updatePostSchema = z.object({
@@ -18,9 +19,10 @@ export const updatePostSchema = z.object({
     .string()
     .min(10, 'El contenido debe tener al menos 10 caracteres.')
     .optional(),
-  imageUrl: z.url('Debe ser una URL de la imagen valida').optional(),
+  imageUrl: z.url('Debe ser una URL de la imagen valida').nullable().optional(),
   slug: z
     .string()
     .min(3, 'El slug debe tener al manos 3 caracteres.')
     .optional(),
+  publicado: z.boolean().optional(),
 });
