@@ -152,6 +152,12 @@ model LessonProgress {
   @@unique([userId, lessonId])
 }
 
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
 model StoreCategory {
   id          Int           @id @default(autoincrement())
   slug        String        @unique
