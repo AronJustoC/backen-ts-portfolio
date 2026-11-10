@@ -6,6 +6,7 @@ import projectRouter, { projectController } from './project.routes';
 import uploadRouter from './upload.routes';
 import courseRouter, { courseController } from './course.routes';
 import storeRouter from './store.routes';
+import settingsRouter from './settings.routes';
 import meRouter from './me.routes';
 import { validateToken } from '../middleware/auth.middleware';
 import { checkRole } from '../middleware/role.middleware';
@@ -23,6 +24,10 @@ import {
 const router = Router();
 
 router.use('/auth', authRouter);
+
+// Site settings: GET is public, PATCH is admin-only inside the router.
+router.use('/settings', settingsRouter);
+
 router.use('/users', validateToken, userRouter);
 
 // Public read-only endpoints consumed by the Astro frontend (no auth)
