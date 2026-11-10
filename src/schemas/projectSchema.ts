@@ -14,6 +14,8 @@ export const createProjectSchema = z.object({
     .url('La URL del sitio en vivo debe ser valida.')
     .optional()
     .nullable(),
+  destacadoPortada: z.boolean().optional(),
+  ordenPortada: z.number().int().min(0).max(99).optional(),
 });
 
 export const updateProjectSchema = z.object({
@@ -31,4 +33,6 @@ export const updateProjectSchema = z.object({
     .url('La URL del sitio en vivo debe ser valida.')
     .optional()
     .nullable(),
+  destacadoPortada: z.boolean().optional(),
+  ordenPortada: z.number().int().min(0).max(99).optional(),
 });
