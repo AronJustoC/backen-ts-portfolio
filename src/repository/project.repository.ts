@@ -50,6 +50,27 @@ export class ProjectRepository {
     });
   }
 
+  async getPortada(): Promise<
+    Pick<
+      Project,
+      'id' | 'title' | 'description' | 'imageUrl' | 'liveUrl' | 'repoUrl'
+    >[]
+  > {
+    return await this.prisma.project.findMany({
+      where: { destacadoPortada: true },
+      orderBy: [{ ordenPortada: 'asc' }, { createdAt: 'desc' }],
+      take: 3,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        imageUrl: true,
+        liveUrl: true,
+        repoUrl: true,
+      },
+    });
+  }
+
   async gerById(id: number): Promise<Project | null> {
     return await this.prisma.project.findUnique({ where: { id } });
   }

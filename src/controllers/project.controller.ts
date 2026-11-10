@@ -21,6 +21,15 @@ export class ProjectController {
     }
   }
 
+  async getPortada(_req: Request, res: Response) {
+    try {
+      const projects = await this.projectService.getPortada();
+      res.status(200).json({ projects });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
   async gerById(req: Request, res: Response) {
     try {
       const { id } = req.params;

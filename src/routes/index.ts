@@ -44,6 +44,9 @@ router.post(
 router.get('/projects/public', (req, res) =>
   projectController.getAll(req, res),
 );
+router.get('/projects/portada', (req, res) =>
+  projectController.getPortada(req, res),
+);
 router.get('/courses/public', (req, res) =>
   courseController.listPublic(req, res),
 );

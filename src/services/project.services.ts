@@ -17,6 +17,15 @@ export class ProjectService {
     return this.projectRepository.getAll();
   }
 
+  async getPortada(): Promise<
+    Pick<
+      Project,
+      'id' | 'title' | 'description' | 'imageUrl' | 'liveUrl' | 'repoUrl'
+    >[]
+  > {
+    return this.projectRepository.getPortada();
+  }
+
   async getById(id: number): Promise<Project | null> {
     return this.projectRepository.gerById(id);
   }

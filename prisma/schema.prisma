@@ -72,6 +72,8 @@ model Project {
   imageUrl    String?
   repoUrl     String?
   liveUrl     String?
+  destacadoPortada Boolean @default(false)
+  ordenPortada     Int     @default(0)
   createdAt   DateTime @default(now())
 
   userId Int
