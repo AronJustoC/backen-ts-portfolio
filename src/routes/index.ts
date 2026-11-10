@@ -5,6 +5,7 @@ import postRouter, { postController } from './post.routes';
 import projectRouter, { projectController } from './project.routes';
 import uploadRouter from './upload.routes';
 import courseRouter, { courseController } from './course.routes';
+import storeRouter from './store.routes';
 import meRouter from './me.routes';
 import { validateToken } from '../middleware/auth.middleware';
 import { checkRole } from '../middleware/role.middleware';
@@ -73,6 +74,7 @@ router.delete(
 router.use('/posts', validateToken, postRouter);
 router.use('/projects', validateToken, projectRouter);
 router.use('/courses', validateToken, courseRouter);
+router.use(storeRouter);
 router.use('/me', validateToken, meRouter);
 router.use('/uploads', validateToken, uploadRouter);
 export default router;
