@@ -7,7 +7,8 @@ import './utils/redis.utils';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  limit: 100,
+  // El web (SSR) llama desde una sola IP interna: 100 se agotaba y devolvía 429.
+  limit: 1000,
   standardHeaders: true,
   legacyHeaders: false,
 });
