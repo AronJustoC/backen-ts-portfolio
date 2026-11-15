@@ -15,6 +15,9 @@ const limiter = rateLimit({
 
 export default function CreateServer() {
   const app = express();
+  // Caddy es el único proxy delante del API: su X-Forwarded-For trae la IP real del visitante,
+  // así el límite cuenta por visitante y no por el contenedor del web.
+  app.set('trust proxy', 1);
 
   // Middlewares globales
   app.use(corsMiddleware);
