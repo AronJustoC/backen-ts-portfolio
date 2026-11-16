@@ -71,8 +71,8 @@ export const storeProductCreateSchema = z.object({
     .default([]),
   variants: z
     .array(storeVariantSchema)
-    .min(1, 'Debe haber al menos una variante.')
     .max(20, 'No puede haber mas de 20 variantes.')
+    .default([])
     .refine(
       (variants) => new Set(variants.map((v) => v.id)).size === variants.length,
       'Los ids de las variantes deben ser unicos.',
