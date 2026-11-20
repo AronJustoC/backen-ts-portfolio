@@ -33,7 +33,8 @@ function handleError(
   ) {
     return res.status(404).json({ message: 'Recurso no encontrado' });
   }
-  return res.status(500).json({ error });
+  console.error(error);
+  return res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
 }
 
 function parseId(raw: string | string[] | undefined): number | null {
@@ -49,7 +50,8 @@ export class StoreController {
       const products = await this.storeService.listPublicProducts();
       res.status(200).json({ products });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -65,7 +67,8 @@ export class StoreController {
       }
       res.status(200).json({ product });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -74,7 +77,8 @@ export class StoreController {
       const categories = await this.storeService.listCategories();
       res.status(200).json({ categories });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -83,7 +87,8 @@ export class StoreController {
       const products = await this.storeService.listAllProducts();
       res.status(200).json({ products });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 

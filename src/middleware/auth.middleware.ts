@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { prisma } from '../utils/prisma.utils';
 import { ValidateToken } from '../utils/jwt.utils';
+import { AppError } from '../utils/error.utils';
 import { UserRepository } from '../repository/user.repository';
 
 export async function validateToken(
@@ -30,6 +31,8 @@ export async function validateToken(
     req.user = userWithoutPassword;
     next();
   } catch (error) {
-    res.status(403).json({ error: 'Usuario no auntenticado', details: error });
+    // Token inválido o expirado: 401 con mensaje controlado, sin detalles internos.
+    const message = error instanceof AppError ? error.message : 'Usuario no autenticado';
+    res.status(401).json({ message });
   }
 }

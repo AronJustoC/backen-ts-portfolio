@@ -2,10 +2,6 @@ import type { Request, Response } from 'express';
 import { Prisma } from '@prisma/client';
 import { CourseService } from '../services/course.services';
 import { AppError } from '../utils/error.utils';
-import {
-  destroyCloudinaryAsset,
-  parseCloudinaryAsset,
-} from '../services/upload.services';
 
 // Devuelve 409 si Prisma reporta una violación de unicidad (slug u orden).
 function handleError(error: unknown, res: Response, conflictMessage: string) {
@@ -24,7 +20,8 @@ function handleError(error: unknown, res: Response, conflictMessage: string) {
   ) {
     return res.status(404).json({ message: 'Recurso no encontrado' });
   }
-  return res.status(500).json({ error });
+  console.error(error);
+  return res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
 }
 
 function parseId(raw: string | string[] | undefined): number | null {
@@ -40,7 +37,8 @@ export class CourseController {
       const courses = await this.courseService.listPublished();
       res.status(200).json({ courses });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -54,7 +52,8 @@ export class CourseController {
       if (!course) return res.status(404).json({ message: 'Course not found' });
       res.status(200).json({ course });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -63,7 +62,8 @@ export class CourseController {
       const courses = await this.courseService.listAll();
       res.status(200).json({ courses });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -75,7 +75,8 @@ export class CourseController {
       if (!course) return res.status(404).json({ message: 'Course not found' });
       res.status(200).json({ course });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -159,24 +160,10 @@ export class CourseController {
       }
       const lesson = await this.courseService.deleteLesson(lessonId, courseId);
       if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
-      // La lección ya está borrada. Si Cloudinary falla, se registra y se responde 204
-      // igual: el asset queda huérfano y se limpia a mano (decisión del plan).
-      for (const url of [lesson.videoUrl, lesson.attachmentUrl]) {
-        const asset = parseCloudinaryAsset(url);
-        if (!asset) continue;
-        try {
-          await destroyCloudinaryAsset(asset.publicId, asset.resourceType);
-        } catch (error) {
-          console.error(
-            'No se pudo borrar asset de Cloudinary:',
-            asset.publicId,
-            error,
-          );
-        }
-      }
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 

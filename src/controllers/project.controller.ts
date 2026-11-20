@@ -9,7 +9,8 @@ export class ProjectController {
       const project = await this.projectService.create(req.user.id, req.body);
       res.status(200).json({ project });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
   async getAll(_req: Request, res: Response) {
@@ -17,7 +18,8 @@ export class ProjectController {
       const projects = await this.projectService.getAll();
       res.status(200).json({ projects });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -26,7 +28,8 @@ export class ProjectController {
       const projects = await this.projectService.getPortada();
       res.status(200).json({ projects });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -38,7 +41,8 @@ export class ProjectController {
         return res.status(404).json({ message: 'Project not found' });
       res.status(200).json({ project });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -57,7 +61,8 @@ export class ProjectController {
           .json({ message: 'Post not found or unauthorized' });
       res.status(200).json({ project: updatedProject });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -75,7 +80,8 @@ export class ProjectController {
           .json({ message: 'Project not found or unauthorized' });
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 }

@@ -15,7 +15,20 @@ env:
   IMAGE: localhost/adnwebs-api:latest
 
 jobs:
+  # Si lint, build o tests fallan, no se construye ni se despliega nada.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bunx prisma generate
+      - run: bun run lint
+      - run: bun run build
+      - run: bun test
+
   build-and-deploy:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

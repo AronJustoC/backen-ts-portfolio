@@ -19,7 +19,8 @@ export class PostController {
       if (code === 'P2025') {
         return res.status(404).json({ message: 'Post no encontrado' });
       }
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -28,7 +29,8 @@ export class PostController {
       const posts = await this.postService.getAll(false);
       res.status(200).json({ posts });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -37,7 +39,8 @@ export class PostController {
       const posts = await this.postService.getAll(true);
       res.status(200).json({ posts });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -48,7 +51,8 @@ export class PostController {
       if (!post) return res.status(404).json({ message: 'Post not found' });
       res.status(200).json({ post });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -62,7 +66,8 @@ export class PostController {
       if (!post) return res.status(404).json({ message: 'Post not found' });
       res.status(200).json({ post });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -76,7 +81,8 @@ export class PostController {
       if (!post) return res.status(404).json({ message: 'Post not found' });
       res.status(200).json({ post });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -102,7 +108,8 @@ export class PostController {
       if (code === 'P2025') {
         return res.status(404).json({ message: 'Post no encontrado' });
       }
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -117,7 +124,8 @@ export class PostController {
           .json({ message: 'Post not found or unauthorized' });
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 }
