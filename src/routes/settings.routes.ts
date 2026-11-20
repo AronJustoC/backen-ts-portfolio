@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { SettingsRepository } from '../repository/settings.repository';
-import { SettingsService } from '../services/settings.service';
+import { SettingsService } from '../services/settings.services';
 import { SettingsController } from '../controllers/settings.controller';
 import { validateToken } from '../middleware/auth.middleware';
 import { checkRole } from '../middleware/role.middleware';

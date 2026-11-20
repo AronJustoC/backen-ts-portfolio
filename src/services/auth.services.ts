@@ -1,6 +1,6 @@
 import { compare } from 'bcryptjs';
 import { UserService } from './user.services';
-import { Sign, ValidateToken } from '../utils/jwt.utils';
+import { Sign, ValidateRefreshToken, ValidateToken } from '../utils/jwt.utils';
 import { AppError } from '../utils/error.utils';
 
 interface DecodedToken {
@@ -17,50 +17,35 @@ export class AuthService {
     this.userService = userService;
   }
 
+  // Usuario inexistente y contraseña incorrecta responden igual: no revela qué correos existen.
   async login(email: string, password: string) {
     const user = await this.userService.getByEmail(email);
-    if (!user) {
-      throw new Error('Usuario no encontrado');
+    const correct = await compare(password, user?.password ?? '');
+    if (!user || !correct) {
+      throw new AppError(401, 'credenciales invalidas');
     }
-    const correct = await compare(password, user.password ?? '');
-    if (!correct) {
-      throw new Error('Contrasenia incorrecta');
-    }
-    const token = await Sign({
+    return Sign({
       id: user.id,
       email: user.email ?? '',
       role: user.role,
     });
-    return token;
   }
-  async refreshToken(user: { id: number; email: string; role: string }) {
-    try {
-      const token = await Sign(user);
-      console.log(token);
-      return token;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
   async refreshSession(refreshToken: string) {
-    console.log('refreshToken:', refreshToken);
-    const decodedRefreshToken = (await ValidateToken(refreshToken)) as {
+    const decodedRefreshToken = (await ValidateRefreshToken(refreshToken)) as {
       token: string;
     };
-    console.log('decodedRefreshToken:', decodedRefreshToken);
     const decodedAccessToken = (await ValidateToken(
       decodedRefreshToken.token,
     )) as DecodedToken;
-    console.log('decodedAccessToken:', decodedAccessToken);
     const user = await this.userService.getById(decodedAccessToken.id);
     if (!user) {
       throw new AppError(404, 'Usuario del token ya no existe');
     }
-    const tokenPayload = {
-      id: user?.id,
+    return Sign({
+      id: user.id,
       email: user.email ?? '',
       role: user.role,
-    };
-    return Sign(tokenPayload);
+    });
   }
 }

@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { SettingsService } from '../services/settings.service';
+import { SettingsService } from '../services/settings.services';
 import { updateNavSchema } from '../schemas/settingsSchema';
 
 export class SettingsController {
@@ -10,7 +10,8 @@ export class SettingsController {
       const { tabs } = await this.settingsService.getNav();
       res.status(200).json({ tabs });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 
@@ -26,7 +27,8 @@ export class SettingsController {
       const { tabs } = await this.settingsService.updateNav(parsed.data);
       res.status(200).json({ tabs });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 }

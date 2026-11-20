@@ -19,13 +19,13 @@ const authController = new AuthController(authService, userService);
 
 // --- Definición de Rutas ---
 // POST /api/auth/register
-router.post('/register', ValidateBody(createUserSchema), (req, res) =>
-  authController.register(req, res),
+router.post('/register', ValidateBody(createUserSchema), (req, res, next) =>
+  authController.register(req, res, next),
 );
 
 // POST /api/auth/login
-router.post('/login', ValidateBody(loginSchema), (req, res) =>
-  authController.login(req, res),
+router.post('/login', ValidateBody(loginSchema), (req, res, next) =>
+  authController.login(req, res, next),
 );
 
 router.post('/refresh', (req, res, next) =>

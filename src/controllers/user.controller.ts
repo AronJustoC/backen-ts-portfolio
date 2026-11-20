@@ -16,7 +16,8 @@ export class UserController {
       });
       res.status(200).json({ data: usersWithoutPasswords });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
   async getById(req: Request, res: Response) {
@@ -34,7 +35,8 @@ export class UserController {
       const { password: _password, ...userData } = user;
       res.status(200).json({ data: userData });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
   async create(req: Request, res: Response) {
@@ -47,7 +49,8 @@ export class UserController {
       });
       res.status(201).json({ data: user });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
   async update(req: Request, res: Response) {
@@ -69,7 +72,8 @@ export class UserController {
       const { password: _password, ...userData } = updatedUser;
       res.status(200).json({ data: userData });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
   async remove(req: Request, res: Response) {
@@ -78,7 +82,8 @@ export class UserController {
       await this.userService.remove(id);
       res.status(201).json({ data: 'ok' });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(error);
+      res.status(500).json({ message: 'Ha ocurrido un error interno en el servidor.' });
     }
   }
 }

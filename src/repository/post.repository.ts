@@ -21,13 +21,14 @@ export class PostRepository {
     });
   }
 
+  // Solo ADMIN llega aquí (checkRole en la ruta): cualquier admin puede editar cualquier post.
   async update(
     id: number,
-    userId: number,
+    _userId: number,
     updateData: UpdatePostDto,
   ): Promise<Post | null> {
     return this.prisma.post.update({
-      where: { id: id, userId: userId },
+      where: { id },
       data: updateData,
     });
   }
@@ -68,11 +69,12 @@ export class PostRepository {
     });
   }
 
-  async delete(id: number, userId: number): Promise<Post | null> {
+  // Solo ADMIN llega aquí: cualquier admin puede borrar cualquier post.
+  async delete(id: number, _userId: number): Promise<Post | null> {
     const deletedPost = await this.prisma.post.findUnique({
       where: { id },
     });
-    if (!deletedPost || deletedPost.userId !== userId) return null;
+    if (!deletedPost) return null;
     return this.prisma.post.delete({ where: { id } });
   }
 }

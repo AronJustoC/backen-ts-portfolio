@@ -1,6 +1,5 @@
 {
   "name": "bluu_node",
-  "module": "src/index.ts",
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
@@ -36,7 +35,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "bun test",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:generate": "prisma generate",
     "seed:store": "tsx scripts/seed-store.ts",
@@ -46,7 +45,6 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "express-rate-limit": "^8.0.1",
-    "ioredis": "^5.8.1",
     "jsonwebtoken": "^9.0.2",
     "typescript-eslint": "^8.38.0",
     "zod": "^4.0.10"

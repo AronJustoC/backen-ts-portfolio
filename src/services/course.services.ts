@@ -7,6 +7,27 @@ import type {
   UpdateProgressDto,
 } from '../dtos/course.dto';
 import { AppError, NotFoundError } from '../utils/error.utils';
+import {
+  destroyCloudinaryAsset,
+  parseCloudinaryAsset,
+} from './upload.services';
+
+// Borra los assets de una lección ya eliminada. Si Cloudinary falla, se registra y no se
+// revierte el borrado: el asset queda huérfano y se limpia a mano (decisión del plan).
+async function cleanupLessonAssets(lesson: {
+  videoUrl: string | null;
+  attachmentUrl: string | null;
+}) {
+  for (const url of [lesson.videoUrl, lesson.attachmentUrl]) {
+    const asset = parseCloudinaryAsset(url);
+    if (!asset) continue;
+    try {
+      await destroyCloudinaryAsset(asset.publicId, asset.resourceType);
+    } catch (error) {
+      console.error('No se pudo borrar asset de Cloudinary:', asset.publicId, error);
+    }
+  }
+}
 
 export class CourseService {
   constructor(private readonly courseRepository: CourseRepository) {}
@@ -60,7 +81,9 @@ export class CourseService {
   }
 
   async deleteLesson(lessonId: number, courseId: number) {
-    return this.courseRepository.deleteLesson(lessonId, courseId);
+    const lesson = await this.courseRepository.deleteLesson(lessonId, courseId);
+    if (lesson) await cleanupLessonAssets(lesson);
+    return lesson;
   }
 
   // Alumno
